@@ -1,0 +1,30 @@
+.DS_Store
+node_modules/
+.env
+.env.*
+!.env.example
+*.log
+*.pem
+*.key
+.ssh/
+tmp/
+output/
+downloads/
+
+# Local build intermediates; index.html is the shipped page.
+/aliva-landing.html
+/aliva-concept-function.html
+
+# Historical previews and references are archived outside this repository.
+/snapshots/
+/concepts/clarity/
+/concepts/ridge/
+/concepts/logos/
+/aliva-*.jpg
+/aliva-focus-fixed.png
+/aliva-landing-previous.html
+/aliva-concept-clarity.html
+/aliva-concept-ridge.html
+/concepts/function/*.jpg
+/concepts/function/BEACH-PROMPT.md
+

@@ -1,0 +1,12 @@
+{
+  "name": "aliva",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Aliva — персональный план профилактики и локальное создание PDF",
+  "scripts": {
+    "build": "node build.cjs && node concepts/function/build.cjs && node scripts/package-site.cjs",
+    "test": "node --test tests/*.test.cjs",
+    "start": "python3 -m http.server 8771 --bind 127.0.0.1"
+  },
+  "engines": { "node": ">=22" }
+}

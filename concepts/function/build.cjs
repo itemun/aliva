@@ -4,7 +4,7 @@ let html=fs.readFileSync(path.join(project,'aliva-landing.html'),'utf8');
 const image='data:image/png;base64,'+fs.readFileSync(path.join(base,'beach-sunrise.png')).toString('base64');
 const font=(file)=>'data:font/ttf;base64,'+fs.readFileSync(path.join(base,'fonts',file)).toString('base64');
 const faces=`@font-face{font-family:Aliva Display;src:url('${font('CormorantGaramond-Italic.ttf')}') format('truetype');font-weight:300 700;font-style:italic;font-display:swap}@font-face{font-family:Aliva Sans;src:url('${font('Manrope.ttf')}') format('truetype');font-weight:200 800;font-style:normal;font-display:swap}`;
-html=html.replace("img-src data:;","img-src data:; font-src data:;");
+html=html.replace("style-src 'unsafe-inline';","style-src 'unsafe-inline'; font-src data:;");
 html=html.replace('</head>','<style>'+faces+read('theme.css')+'</style></head>');
 const brand=read('brand.html');
 const footerBrand=brand.match(/<svg[\s\S]*?<\/svg>/)[0].replace('viewBox="0 0 136.6560 50"','viewBox="0 0 136.6560 45"');

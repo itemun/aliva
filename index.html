@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <meta name="referrer" content="no-referrer">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; font-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' https://mc.yandex.ru https://yastatic.net; style-src 'unsafe-inline'; font-src data:; img-src data: https://mc.yandex.ru https://mc.yandex.com https://mc.yandex.kz; connect-src https://mc.yandex.ru https://mc.yandex.com https://mc.yandex.kz; form-action 'none'; base-uri 'none'">
 <title>Aliva — забота о себе с понятным планом</title>
 <style>
 :root{color-scheme:light;--bg:#f5f7f2;--paper:#fff;--ink:#233d30;--muted:#65766b;--green:#30654d;--soft:#edf3e9;--line:#dce5d9;--error:#a8332e;--view-height:100dvh;font-family:Arial,Helvetica,sans-serif;color:var(--ink);background:var(--bg)}
@@ -376,7 +376,7 @@ body.app-dialog-open{overflow:hidden}
   <div class="section-inner questionnaire-layout">
    <main class="content">
 <section class="intro"><p class="eyebrow">ВАШ ПЛАН ПРОФИЛАКТИКИ</p><h1>Здоровье.<br>С понятным<br><span>планом действий.</span></h1><p class="lead">Что проверить, зачем и когда.<br>Начните с нескольких вопросов о себе.</p><div class="perks"><p class="perk"><b aria-hidden="true">✓</b>Понятный план на ближайший год</p><p class="perk"><b aria-hidden="true">↗</b>Без регистрации и отправки ответов</p></div><button class="text-button" id="example">Посмотреть пример результата ↗</button></section>
-<section class="card ym-hide-content" aria-label="Анкета Aliva">
+<section class="card ym-hide-content ym-disable-clickmap ym-disable-submit ym-disable-keys" aria-label="Анкета Aliva">
 <div id="progress-wrap"><div class="progress-head"><span id="step-name"></span><span id="step-count"></span></div><div class="progress" id="progress" role="progressbar" aria-label="Ход заполнения" aria-valuemin="0" aria-valuemax="100"></div></div>
 <div class="stage" id="stage" aria-live="polite"></div>
 <p class="error" id="error" role="alert" hidden></p>
@@ -1080,12 +1080,12 @@ if(typeof module!=='undefined'&&module.exports)module.exports=root.AlivaPDF;
 })(typeof globalThis!=='undefined'?globalThis:this);
 </script>
 <script id="aliva_analytics">
-/* Conversion hooks only. No questionnaire values, identifiers or persistent queue. */
+/* Visits and four allowlisted conversions; never read questionnaire values. */
 (()=>{
  'use strict';
- // Set this when installing the Yandex Metrica tag. See ANALYTICS.md.
- const COUNTER_ID=0;
- let counterId=COUNTER_ID;
+ if(window.AlivaAnalytics)return;
+ const COUNTER_ID=114646189;
+ let counterId=0;
  const goals=Object.freeze(['aliva_app_store_click','aliva_google_play_click','aliva_pdf_download','aliva_example_pdf_download']);
  function track(goal){
   if(!goals.includes(goal))return false;
@@ -1095,6 +1095,30 @@ if(typeof module!=='undefined'&&module.exports)module.exports=root.AlivaPDF;
  }
  function configure(id){counterId=Number.isSafeInteger(id)&&id>0?id:0;}
  window.AlivaAnalytics=Object.freeze({track,configure,goals});
+ // Local previews and downloaded HTML must not pollute production statistics.
+ const location=window.location;
+ if(location?.protocol!=='https:'||location.hostname!=='itemun.github.io'||!/^\/aliva(?:\/|$)/.test(location.pathname))return;
+ try{
+  window.ym=window.ym||function(){(window.ym.a=window.ym.a||[]).push(arguments)};
+  window.ym.l=window.ym.l||Date.now();
+  let referrer='';
+  try{const ref=new URL(document.referrer);if(['https:','http:'].includes(ref.protocol))referrer=ref.origin+'/';}catch{}
+  counterId=COUNTER_ID;
+  window.ym(counterId,'init',{
+   ssr:true,webvisor:false,clickmap:false,trackLinks:false,trackHash:false,
+   ecommerce:false,childIframe:false,disableYtm:true,sendTitle:false,
+   accurateTrackBounce:true,
+   // Query strings, hashes and referrer search terms are not sent.
+   url:location.origin+location.pathname,referrer
+  });
+  if(!document.querySelector('script[data-aliva-metrica]')){
+   const script=document.createElement('script');
+   script.async=true;script.src='https://mc.yandex.ru/metrika/tag.js?id='+counterId;
+   script.dataset.alivaMetrica='';script.referrerPolicy='origin';
+   script.onerror=()=>{counterId=0;if(window.ym.a)window.ym.a.length=0;};
+   document.head.append(script);
+  }
+ }catch{counterId=0;}
 })();
 </script>
 <script id="aliva_app">
@@ -1186,7 +1210,7 @@ function render(){
  }else if(overlay==='waist'){
   html=heading('Как измерить талию','Нужна обычная сантиметровая лента.')+'<div class="info-copy"><p>Расположите ленту посередине между нижним ребром и верхним краем тазовой кости.</p><p>Держите её горизонтально, не сдавливая кожу. Измерьте на обычном выдохе, не втягивая живот.</p><p>Нет сантиметровой ленты? Используйте нерастяжимую нить, затем измерьте её длину линейкой.</p><a href="https://www.who.int/docs/default-source/ncds/ncd-surveillance/steps/part3.pdf" target="_blank" rel="noopener noreferrer">Методика ВОЗ ↗</a></div>';
  }else if(overlay==='privacy'){
-  html=heading('Ваши ответы — только у Вас')+'<div class="info-copy"><p>Анкета работает в браузере. Ответы не отправляются на сервер и не сохраняются в хранилище браузера.</p><p>Регистрация не нужна. После обновления или закрытия страницы ответы исчезнут.</p><p>PDF сохраняется на Вашем устройстве после нажатия кнопки.</p></div>';
+  html=heading('Ваши ответы — только у Вас')+'<div class="info-copy"><p>Анкета работает в браузере. Ответы не отправляются на сервер и не сохраняются в хранилище браузера.</p><p>Регистрация не нужна. После обновления или закрытия страницы ответы исчезнут.</p><p>PDF сохраняется на Вашем устройстве после нажатия кнопки.</p><p>Для оценки работы сайта подключена Яндекс Метрика: она получает технические данные о посещениях и события нажатия кнопок магазинов и скачивания PDF, может использовать cookie. Ответы анкеты и содержимое PDF в аналитику не передаются. Запись действий и полей через Вебвизор отключена.</p></div>';
  }else if(overlay==='about'){
   html=heading('О Вашем плане')+'<div class="info-copy"><p>Базовая профилактика для взрослых: программы России и Казахстана по выбранной стране. Предполагается отсутствие регулярных обследований.</p><p>При жалобах, беременности и хронических заболеваниях план необходимо уточнить с врачом.</p><p>Расчёт по фиксированным правилам, без ИИ. Версия '+escape(AlivaRules.VERSION)+'. Даты и основания рекомендаций указаны рядом с источниками в PDF. Клиническая экспертиза ещё не проведена; план не заменяет назначения.</p></div>';
  }else if(overlay==='result'){

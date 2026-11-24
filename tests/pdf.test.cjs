@@ -74,7 +74,7 @@ test('Export stays inline/offline with no feedback destination',()=>{
  }
  const app=fs.readFileSync(base+'/src/app.js','utf8');
  assert(!/mailto:|feedbackEmail|feedbackText|openFeedbackLink/.test(app));
- assert(!/<(?:script|iframe)[^>]*src=/.test(html));assert(html.includes("connect-src 'none'"));
+ assert(!/<(?:script|iframe)[^>]*src=/.test(html));assert.equal(html.match(/connect-src ([^;]+)/)[1],'https://mc.yandex.ru https://mc.yandex.com https://mc.yandex.kz');
 });
 
 

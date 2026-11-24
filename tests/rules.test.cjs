@@ -98,7 +98,7 @@ test('Delivered file contains the tested engine, stays self-contained and does n
  assert.equal(JSON.stringify(context.AlivaRules.buildPlan(base)),JSON.stringify(R.buildPlan(base)));
  const code=[core,fs.readFileSync(path.join(__dirname,'../src/app.js'),'utf8')].join('\n');
  assert(!/localStorage|sessionStorage|indexedDB|document\.cookie|fetch\s*\(|XMLHttpRequest|sendBeacon|WebSocket|console\./.test(code));
- assert(!/<(?:script|iframe)[^>]*src=/.test(html));assert(html.includes("connect-src 'none'"));
+ assert(!/<(?:script|iframe)[^>]*src=/.test(html));assert.equal(html.match(/connect-src ([^;]+)/)[1],'https://mc.yandex.ru https://mc.yandex.com https://mc.yandex.kz');
 });
 test('Dental examination and vaccination-history review are part of every baseline plan',()=>{
  for(const patch of [{age:18},{age:120},{diabetes:'two',sex:'female'}]){

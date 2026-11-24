@@ -118,3 +118,12 @@ test('Female explanations preserve uncertainty, country context and upper-age re
  assert(g(76,'kz').notes.breast.some(n=>n.body.includes('недостаточно')));
  assert(g(77,'kz').notes.visit.some(n=>n.body.startsWith('Маммография:')));
 });
+
+test('Public example always uses the current engine and PDF, shared synthetic profile, and requested date',async()=>{
+ global.AlivaRules=R;const example=require('../src/example.js');
+ const p=example.build('2026-11-24'),before=JSON.stringify(example.profile);
+ assert.deepEqual(p,R.buildPlan({...basic},'2026-11-24'));assert.equal(p.version,R.VERSION);assert(Object.isFrozen(example.profile));
+ const doc=await PDFLib.PDFDocument.load(await PDF.create(p,{example:true}));assert.match(doc.getTitle(),/пример/);assert.equal(JSON.stringify(example.profile),before);
+ const interactions=fs.readFileSync(base+'/concepts/function/interactions.js','utf8');assert(interactions.includes('const example=AlivaExample.build()'));assert(interactions.includes('AlivaPDF.create(example,{example:true})'));
+ assert(fs.readFileSync(base+'/src/app.js','utf8').includes('const sample=AlivaExample.profile'));
+});

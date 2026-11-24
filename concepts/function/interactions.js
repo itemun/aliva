@@ -19,7 +19,8 @@
   }else target.scrollIntoView({behavior,block:'start'});
   target.focus({preventScroll:true});updateHeader();
  };
- const start=()=>{
+ const start=(trackOpen=true)=>{
+  if(trackOpen!==false)window.AlivaAnalytics?.track('aliva_questionnaire_open',true);
   if(location.hash!=='#questionnaire')history.pushState(null,'','#questionnaire');
   goSection('questionnaire');
  };
@@ -31,7 +32,7 @@
   button.disabled=true;button.setAttribute('aria-busy','true');button.textContent='Готовим PDF…';status.textContent='';
   try{
    // This profile is separate from the user's questionnaire and calculated plan.
-   const example=AlivaRules.buildPlan({country:'ru',sex:'female',age:45,height:165,weight:68,waist:85,smoking:'never',diabetes:'no'});
+   const example=AlivaExample.build();
    const bytes=await AlivaPDF.create(example,{example:true});
    const url=URL.createObjectURL(new Blob([bytes],{type:'application/pdf'}));
    const link=document.createElement('a');link.href=url;link.download='aliva-example-'+example.asOf+'.pdf';
@@ -62,7 +63,7 @@
   if(event.target===appDialog&&(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom))appDialog.close();
  });
  appDialog.addEventListener('close',()=>{document.body.classList.remove('app-dialog-open');storeTrigger?.focus({preventScroll:true});});
- document.querySelectorAll('[data-info]').forEach(el=>el.addEventListener('click',()=>{$(el.dataset.info).click();start()}));
+ document.querySelectorAll('[data-info]').forEach(el=>el.addEventListener('click',()=>{$(el.dataset.info).click();start(false)}));
  document.querySelectorAll('a[href^="#"]').forEach(link=>link.addEventListener('click',event=>{
   const id=link.getAttribute('href').slice(1);if(!$(id))return;
   event.preventDefault();if(location.hash!=='#'+id)history.pushState(null,'','#'+id);goSection(id);

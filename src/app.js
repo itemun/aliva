@@ -19,7 +19,7 @@ const measurementIssue=values=>{
  }
  return null;
 };
-const sample={country:'ru',sex:'female',age:45,height:165,weight:68,waist:85,smoking:'never',diabetes:'no'};
+const sample=AlivaExample.profile;
 const refinementQuestions=[
  {key:'symptoms',title:'Есть ли сейчас жалобы?',sub:'Беспокоящие симптомы важно обсудить отдельно от профилактики.'},
  {key:'medicalHistory',title:'Есть ли важная история здоровья?',sub:'Другие хронические болезни, постоянные лекарства или отклонения в прошлых обследованиях. Диабет мы уже учли.'},
@@ -38,6 +38,7 @@ function calculate(example=false){
  const calculated=AlivaRules.buildPlan(example?sample:data,localDate());
  if(!calculated.ok){const e=calculated.errors[0];const fields={country:'profile',age:'profile',sex:'profile',height:'measurements',weight:'measurements',waist:'measurements',smoking:'smoking',years:'years',cigs:'cigs',quit:'quit',diabetes:'diabetes'};overlay=null;step=fields[e.field];render();fail(e.message,$(e.field));return}
  plan=calculated;isExample=example;pdfRequested=false;showOverlay('result');
+ if(!example)window.AlivaAnalytics?.track('aliva_plan_ready',true);
 }
 function resultHTML(){
  const r=resultPage?plan.items[resultPage-1]:null;
@@ -86,7 +87,7 @@ function render(){
  }else if(overlay==='waist'){
   html=heading('Как измерить талию','Нужна обычная сантиметровая лента.')+'<div class="info-copy"><p>Расположите ленту посередине между нижним ребром и верхним краем тазовой кости.</p><p>Держите её горизонтально, не сдавливая кожу. Измерьте на обычном выдохе, не втягивая живот.</p><p>Нет сантиметровой ленты? Используйте нерастяжимую нить, затем измерьте её длину линейкой.</p><a href="https://www.who.int/docs/default-source/ncds/ncd-surveillance/steps/part3.pdf" target="_blank" rel="noopener noreferrer">Методика ВОЗ ↗</a></div>';
  }else if(overlay==='privacy'){
-  html=heading('Ваши ответы — только у Вас')+'<div class="info-copy"><p>Анкета работает в браузере. Ответы не отправляются на сервер и не сохраняются в хранилище браузера.</p><p>Регистрация не нужна. После обновления или закрытия страницы ответы исчезнут.</p><p>PDF сохраняется на Вашем устройстве после нажатия кнопки.</p><p>Для оценки работы сайта подключена Яндекс Метрика: она получает технические данные о посещениях и события нажатия кнопок магазинов и скачивания PDF, может использовать cookie. Ответы анкеты и содержимое PDF в аналитику не передаются. Запись действий и полей через Вебвизор отключена.</p></div>';
+  html=heading('Ваши ответы — только у Вас')+'<div class="info-copy"><p>Анкета работает в браузере. Ответы не отправляются на сервер и не сохраняются в хранилище браузера.</p><p>Регистрация не нужна. После обновления или закрытия страницы ответы исчезнут.</p><p>PDF сохраняется на Вашем устройстве после нажатия кнопки.</p><p>Яндекс Метрика загружается только с Вашего согласия. Для улучшения сайта она обрабатывает технические данные о браузере и устройстве, IP-адрес, источник перехода, посещения, клики вне анкеты и общие этапы получения плана. Используются cookie и идентификатор браузера. Ответы о здоровье, условные вопросы и содержимое PDF не передаются; Вебвизор отключён. Получатель статистики — ООО «ЯНДЕКС».</p><p>Отказ не ограничивает работу сайта. Внизу страницы через «Настройки аналитики» можно изменить выбор и остановить дальнейший сбор. Выбор хранится на этом устройстве до 180 дней отдельно от ответов. Действия до согласия не отправляются задним числом. Отзыв согласия не удаляет уже отправленную статистику.</p><p><a href="https://yandex.ru/legal/confidential/" target="_blank" rel="noopener noreferrer">Политика Яндекса ↗</a> · <a href="https://yandex.ru/support/metrica/ru/general/cookie-usage" target="_blank" rel="noopener noreferrer">Cookie Метрики и сроки хранения ↗</a></p></div>';
  }else if(overlay==='about'){
   html=heading('О Вашем плане')+'<div class="info-copy"><p>Базовая профилактика для взрослых: программы России и Казахстана по выбранной стране. Предполагается отсутствие регулярных обследований.</p><p>При жалобах, беременности и хронических заболеваниях план необходимо уточнить с врачом.</p><p>Расчёт по фиксированным правилам, без ИИ. Версия '+escape(AlivaRules.VERSION)+'. Даты и основания рекомендаций указаны рядом с источниками в PDF. Клиническая экспертиза ещё не проведена; план не заменяет назначения.</p></div>';
  }else if(overlay==='result'){
@@ -184,6 +185,8 @@ $('next').addEventListener('click',()=>{
   const focus=inputs.findIndex(el=>el===document.activeElement);if(focus>=0&&focus<inputs.length-1){$('stage').querySelectorAll('.measurement-row').forEach(row=>row.classList.remove('focused'));inputs[focus+1].closest('.measurement-row').classList.add('focused');inputs[focus+1].focus();return}
  }
  if(!validate())return;
+ if(step==='profile')window.AlivaAnalytics?.track('aliva_profile_complete',true);
+ if(step==='measurements')window.AlivaAnalytics?.track('aliva_measurements_complete',true);
  document.activeElement?.blur();
  if(step==='diabetes'){calculate();return}
  step=stages()[stages().indexOf(step)+1];render();

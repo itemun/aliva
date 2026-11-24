@@ -174,7 +174,7 @@ body.inline-questionnaire .questionnaire-section .content{display:flex;justify-c
 .app-benefits strong{font-size:15px;font-weight:650;line-height:1.5}
 .app-benefits p{font-size:13px;line-height:1.65;color:#807468;margin-top:5px;max-width:340px}
 .app-coming-label{font-size:12px;color:#a46040;margin-top:30px}
-.store-buttons{display:flex;align-items:center;flex-wrap:wrap;gap:4px 12px;margin-top:8px}
+.store-buttons{display:flex;align-items:center;flex-wrap:wrap;gap:4px 12px;margin:0 0 24px}
 .store-button{background:none;border:0;padding:0;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .15s}
 .store-button:hover{transform:translateY(-2px)}
 .store-button img{display:block;object-fit:contain;max-width:100%}
@@ -195,7 +195,7 @@ body.app-dialog-open{overflow:hidden}
 @media(max-width:680px){.inline-questionnaire .questionnaire-section{padding-left:16px;padding-right:16px}.questionnaire-layout{gap:40px}.questionnaire-layout .app-preview{padding:4px 7px 10px}.app-preview .section-kicker{font-size:10px}.app-preview .editorial-title{font-size:36px}.app-description{font-size:15px}.app-benefits strong{font-size:15px}.app-benefits p{font-size:14px}.app-coming-label{font-size:13px}.store-buttons{gap:4px}.apple-store img{width:140px;height:47px}.google-store img{width:164px;height:64px}#app-coming-dialog{padding:42px 24px 28px}#app-coming-dialog .editorial-title{font-size:34px}#app-coming-dismiss{font-size:15px}}
 @media(prefers-reduced-motion:reduce){.store-button{transition:none}}
 
-/* Match the invitation's top and badge baseline to the questionnaire card. */
+/* Match the invitation height to the questionnaire card. */
 @media(min-width:1001px){
  .questionnaire-layout{align-items:stretch}
  body.inline-questionnaire .questionnaire-layout .content{align-items:stretch}
